@@ -70,6 +70,10 @@
             point = coefficient * ECC.G
             @test point2sec(point,false) == hex2bytes(uncompressed)
             @test point2sec(point,true) == hex2bytes(compressed)
+            want = hex2bytes("02000000000005689111130e588a12ecda87b2dc5585c6c6ba66a412fa0cce65bc")
+            point = S256Point(parse(BigInt, "5689111130e588a12ecda87b2dc5585c6c6ba66a412fa0cce65bc", base =16),
+                              parse(BigInt, "9153b93a0c3b37a18b483b45f36c8a9c1c7deb468202eff9423318bfb9660f12", base=16))
+            @test point2sec(point) == want
         end
 
         @testset "sec2point" begin

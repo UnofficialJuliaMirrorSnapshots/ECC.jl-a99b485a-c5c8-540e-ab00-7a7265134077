@@ -79,15 +79,23 @@ as second argument.
 """
 function point2sec(P::T, compressed::Bool=true) where {T<:S256Point}
     xbin = int2bytes(P.𝑥.𝑛)
+    if length(xbin) < 32
+        prepend!(xbin, UInt8.(zeros(32 - length(xbin))))
+    end
     if compressed
         if mod(P.𝑦.𝑛, 2) == 0
             prefix = 0x02
         else
             prefix = 0x03
         end
-        return cat(prefix,xbin;dims=1)
+        return pushfirst!(xbin,prefix)
     else
-        return cat(0x04,xbin,int2bytes(P.𝑦.𝑛);dims=1)
+        pushfirst!(xbin, 0x04)
+        ybin = int2bytes(P.𝑦.𝑛)
+        if length(ybin) < 32
+            prepend!(ybin, UInt8.(zeros(32 - length(ybin))))
+        end
+        return append!(xbin, ybin)
     end
 end
 
